@@ -1,0 +1,19 @@
+{
+    "python.testing.pytestArgs": [
+        "tests"
+    ],
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true,
+    "python.analysis.autoImportCompletions": true,
+    "python.analysis.typeCheckingMode": "basic",
+    "cSpell.ignoreWords": [
+        "dateparser",
+        "fmethod",
+        "modifyitems",
+        "nodeid",
+        "xpaths"
+    ],
+    "cSpell.words": [
+        "atkamara"
+    ]
+}
