@@ -1,11 +1,11 @@
-from vacuum.Page import MainPage
+from falcon.Page import MainPage
 from os import path
 from scrapy import Selector
 
 def load_page(name):
     extension = 'html'
     root = 'src'
-    project = 'vacuum'
+    project = 'falcon'
     asset = 'assets'
     file = path.join(root,project,asset,f'{name}.{extension}')
     return Selector(text=open(file).read())

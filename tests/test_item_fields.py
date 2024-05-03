@@ -12,7 +12,7 @@ Functions:
 - test_field_ProductPrice(): Checks 'Product Price' field of the item.
 - test_field_VendorLocation(): Checks 'Vendor Location' field of the item.
 """
-from vacuum.Item import MainItem
+from falcon.Item import MainItem
 from scrapy import Selector
 
 html = """          <div class="listings-cards__list-item">

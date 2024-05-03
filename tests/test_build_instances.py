@@ -10,8 +10,8 @@ Functions:
 - test_page_instance(): Tests the creation of a Page class instance.
 - test_MainItem_instance(): Tests the creation of a MainItem class instance.
 """
-from vacuum import Model
-from vacuum import Item
+from falcon import Model
+from falcon import Item
 from scrapy import Selector
 from dataclasses import dataclass
 

@@ -3,7 +3,7 @@ requires = ["flit"]
 build-backend = "flit.buildapi"
 
 [project]
-name =  "vacuum"
+name =  "falcon"
 authors = [
     {name = "Abdourahmane Tintou KAMARA", email = "atkamara.ds@outlook.com"},
 ]
@@ -47,12 +47,12 @@ test = [
 ]
 
 [project.urls]
-Documentation = "https://github.com/atkamara/vacuum/tree/master#readme"
-Source = "https://github.com/atkamara/vacuum/"
-Tracker = "https://github.com/atkamara/vacuum/tree/master/issues"
+Documentation = "https://github.com/atkamara/falcon/tree/master#readme"
+Source = "https://github.com/atkamara/falcon/"
+Tracker = "https://github.com/atkamara/falcon/tree/master/issues"
 
 [tool.flit.module]
-name = "vacuum"
+name = "falcon"
 
 [tool.bandit]
 exclude_dirs = ["build","dist","tests","scripts"]
