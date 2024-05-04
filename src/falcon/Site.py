@@ -25,7 +25,8 @@ class MainSite(Site):
         self.name: str = name
         self.start_urls: list = start_urls
         self.Page = MainPage
-        self.db: str = db 
+        if db:
+            self.db: str = db 
 class MultipleSites:
     """
     A class representing multiple websites.

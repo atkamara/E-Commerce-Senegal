@@ -3,3 +3,4 @@ sphinx-copybutton
 sphinx-rtd-theme
 scrapy
 dateparser
+redis
