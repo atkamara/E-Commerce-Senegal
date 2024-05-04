@@ -1,36 +1,54 @@
+"""
+Module containing utility functions for the project.
+
+Functions:
+    dir: Returns the path to a file in the current directory.
+    ravel: Flattens and formats a string, list, or set.
+"""
+
 from os import path
 import re
 
 from typing import Union
 
+def dir(file: str) -> str:
+    """
+    Returns the path to a file in the current directory.
 
-def dir(file):
+    Args:
+        file (str): The name of the file.
+
+    Returns:
+        str: The full path to the file.
+    """
     return path.join(
         path.dirname(path.realpath(__file__)),
         file
     )
-phone=r'[\s\-]{0,1}?'.join([
-                r'\+{0,1}?\d{0,3}',
-                r'(\d{2}',
-                r'\d{3}',
-                r'\d{2}',
-                r'\d{2})'
-                ])
+
+phone = r'[\s\-]{0,1}?'.join([
+    r'\+{0,1}?\d{0,3}',
+    r'(\d{2}',
+    r'\d{3}',
+    r'\d{2}',
+    r'\d{2})'
+])
+
 currency = r'(\d{1}.*?)[^\d\s,.]'
-def ravel(value:Union[str,list[str],set[str]],sep=' ')->str:
+
+def ravel(value: Union[str, list[str], set[str]], sep: str = ' ') -> str:
     """
-    This function takes a value as input, which can be a string, list of strings, or a set of strings.
-    If the input is a set or list, the function concatenates the strings into a single string separated by spaces.
-    Then, it removes newline characters and multiple spaces from the string.
-    
-    Parameters:
-    value (Union[str,list[str],set(str)]): The input value to be raveled.
-    
+    Flattens and formats a string, list, or set.
+
+    Args:
+        value (Union[str, list[str], set[str]]): The value to flatten and format.
+        sep (str, optional): The separator to use when joining elements. Defaults to ' '.
+
     Returns:
-    str: The raveled string with removed newline characters and multiple spaces.
+        str: The flattened and formatted value.
     """
-    if isinstance(value,(set,list)):
+    if isinstance(value, (set, list)):
         value = sep.join(set(value))
-    raveled = value.replace('\n',' ')
-    removed_multiple_spaces = re.sub(r'\s+',' ',raveled)
+    raveled = value.replace('\n', ' ')
+    removed_multiple_spaces = re.sub(r'\s+', ' ', raveled)
     return removed_multiple_spaces.strip()
