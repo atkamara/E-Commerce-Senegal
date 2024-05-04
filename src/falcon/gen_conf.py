@@ -38,8 +38,8 @@ def write_config(config, file, entity, **kwargs):
         **kwargs: Additional keyword arguments representing configuration parameters.
     """
     config[entity] = dict(kwargs)
-    with open(file, 'w+') as cfile:
-        config.write(cfile)
+    with open(file, 'w+') as conf_file:
+        config.write(conf_file)
 @lru_cache(maxsize=None)
 def get_relative(paths: tuple):
     """

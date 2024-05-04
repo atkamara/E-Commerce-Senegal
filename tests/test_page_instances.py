@@ -49,7 +49,6 @@ def test_main_page_first_element():
     p = MainPage(response)
     p2 = p[0]
     assert type(p[0]).__name__ == 'MainItem'
-    
 def test_main_page_next_page():
     """
     Tests the next page attribute of MainPage objects.
@@ -57,7 +56,6 @@ def test_main_page_next_page():
     response = load_page('p1')
     p = MainPage(response)
     assert p.next
-    
 def test_page_items_count():
     """
     Tests the count of items on each page.

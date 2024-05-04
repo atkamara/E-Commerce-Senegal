@@ -18,6 +18,7 @@ from dataclasses import field as dcl_field, asdict, dataclass, make_dataclass
 from datetime import datetime
 import configparser
 from scrapy import Spider
+from .utils import un_nest_dict
 class Formatter(ABC):
     """
     Abstract base class representing a data formatter.
@@ -121,6 +122,58 @@ class Field(Formatter):
             list: A list of extracted values.
         """
         return self.getter(paths='relative_xpaths')
+class Con(ABC):
+    """
+    Abstract base class representing a connection interface.
+    Methods:
+        Push: Abstract method to push an object to the connection.
+    """
+    @abstractmethod
+    def Push(MappedData):
+        """
+        Abstract method to push an object to the connection.
+        Args:
+            MappedData: The object to push to the connection.
+        Raises:
+            NotImplementedError: If the method is not implemented in the subclass.
+        """
+        ...
+class MappedData:
+    """
+    Represents mapped data with a specific name and fields.
+    Attributes:
+        name (str): The name of the mapped data.
+        fields (list): A list of field names for the dataclass.
+        dataclass: The constructed dataclass object representing the mapped data.
+    Methods:
+        __init__: Initializes a MappedData object with the provided name and fields.
+        __str__: Returns the dataclass as a dictionary.
+        __rshift__: Pushes the string representation of the dataclass to a consumer.
+    """
+    def __init__(self, name, fields):
+        """
+        Initializes a MappedData object with the provided name and fields.
+        Args:
+            name (str): The name of the mapped data.
+            fields (list): A list of field names for the dataclass.
+        """
+        self.name = name 
+        self.fields = fields 
+        self.dataclass = make_dataclass(self.name, self.fields)()
+    def __str__(self):
+        """
+        Returns the dataclass as a dictionary.
+        Returns:
+            dict: The dataclass represented as a dictionary.
+        """
+        return asdict(self.dataclass)
+    def __rshift__(self, Con):
+        """
+        Pushes the string representation of the dataclass to a consumer.
+        Args:
+            Con: The consumer object to which the data is pushed.
+        """
+        Con.Push(str(self))
 class Item:
     """
     A class representing an item extracted from a web page.
@@ -149,15 +202,6 @@ class Item:
             str: The name of the Item class.
         """
         return self.__class__.__name__
-    def __rshift__(self, f):
-        """
-        Defines the behavior for the '>>' operator.
-        Args:
-            f: The function or method to apply to each item.
-        Returns:
-            None
-        """
-        ...
     @classmethod
     def parse(cls, html, method='value'):
         """
@@ -175,7 +219,7 @@ class Item:
              getattr(field(html), method))
             for field in self.registry
         ] + [('CreatedAt', datetime, datetime.now().isoformat())]
-        return make_dataclass(str(self), item_fields)()
+        return MappedData(str(self), item_fields)
 class Config:
     """
     A class for reading and accessing configuration settings.
@@ -315,7 +359,10 @@ class Site:
     name: str
     start_urls: list
     Page: Page
-    db: str = None
+    class db:
+        @staticmethod
+        def Push(self,foo):
+            return foo
     @property
     def spider(self) -> SiteSpider:
         """
@@ -335,7 +382,7 @@ class Site:
             name = self.name
             start_urls = self.start_urls
             Page = self.Page
-            engine = self.engine
+            db = self.db
             def parse(self, response):
                 """
                 Parses the response from the website.
