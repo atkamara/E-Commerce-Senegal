@@ -37,8 +37,3 @@ def test_main_page_next_page():
 def test_page_items_count():
     p = [len(MainPage(load_page('p%d'%d))) for d in range(1,8)]
     assert p == [42, 33, 14, 46, 12, 21, 25]
-    
-def test_to_binary():
-    test = lambda d : MainPage(load_page('p%d'%d)) >> 'test' 
-    (*map(test,range(1,8)),)
-    
