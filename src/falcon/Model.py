@@ -152,7 +152,7 @@ class Cursor(ABC):
         Raises:
             NotImplementedError: If the method is not implemented in the subclass.
         """
-class Result:
+class MappedData:
     """
     Represents mapped data with a specific name and fields.
     Attributes:
@@ -160,13 +160,13 @@ class Result:
         fields (list): A list of field names for the dataclass.
         dataclass: The constructed dataclass object representing the mapped data.
     Methods:
-        __init__: Initializes a Result object with the provided name and fields.
+        __init__: Initializes a MappedData object with the provided name and fields.
         __str__: Returns the dataclass as a dictionary.
         __rshift__: Pushes the string representation of the dataclass to a consumer.
     """
     def __init__(self, name, fields):
         """
-        Initializes a Result object with the provided name and fields.
+        Initializes a MappedData object with the provided name and fields.
         Args:
             name (str): The name of the mapped data.
             fields (list): A list of field names for the dataclass.
@@ -233,7 +233,7 @@ class Item:
              getattr(field(html), method))
             for field in self.registry
         ] + [('CreatedAt', datetime, datetime.now().isoformat())]
-        return Result(str(self), item_fields)
+        return MappedData(str(self), item_fields)
 class Config:
     """
     A class for reading and accessing configuration settings.
