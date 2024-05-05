@@ -43,7 +43,6 @@ class ProductTitle(CssField):
     Methods:
         fmethod: Method defining the behavior for formatting product titles.
     """
-    ...
 @MainItem.register
 class VendorLocation(CssField):
     """
@@ -51,7 +50,6 @@ class VendorLocation(CssField):
     Inherits:
         CssField
     """
-    ...
 @MainItem.register
 class PublishDate(CssField):
     """

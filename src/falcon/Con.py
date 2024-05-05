@@ -8,8 +8,7 @@ Functions:
     flatten_dict: Flatten a dictionary with nested dictionaries and lists.
 """
 import redis
-from functools import cached_property
-from .Model import Cursor 
+from .Model import Cursor
 from .utils import flatten_dict
 class Redis(Cursor):
     """
@@ -26,10 +25,6 @@ class Redis(Cursor):
                  domain:str,
                  category : str,
                  partition: str,
-                 host: str,
-                 port: int = 6379,
-                 username: str = ...,
-                 password: str = ...,
                  **kwargs) -> None:
         """
         Initializes a Redis object with the provided parameters.
@@ -47,7 +42,7 @@ class Redis(Cursor):
         self.domain = domain
         self.category = category
         self.partition = partition
-        self.engine = redis.Redis(host, port, username, password, **kwargs)
+        self.engine = redis.Redis(**kwargs)
     @property
     def pattern(self):
         """
@@ -85,13 +80,13 @@ class Redis(Cursor):
             str: Flattened string representation of the input data.
         """
         return flatten_dict(str(data))
-    def push(DataHandler):
+    def push(self,Result):
         """
         Pushes a mapped data object to the Redis database.
         Args:
-            DataHandler: The mapped data object to push to Redis.
+            Result: The mapped data object to push to Redis.
         Returns:
             None
         """
         self.engine.hset(self.id,
-                         mapping=self.pipe(DataHandler))
+                         mapping=self.pipe(Result))

@@ -48,7 +48,7 @@ def test_main_page_first_element():
     response = load_page('p1')
     p = MainPage(response)
     p2 = p[0].dataclass
-    assert type(p[0]).__name__ == 'DataHandler'
+    assert type(p[0]).__name__ == 'Result'
 def test_main_page_next_page():
     """
     Tests the next page attribute of MainPage objects.
