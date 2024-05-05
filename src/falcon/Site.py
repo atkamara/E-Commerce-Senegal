@@ -86,5 +86,7 @@ class MultipleSites:
             MainSite: The MainSite object at the specified index.
         """
         return MainSite((name:=self.site_names[ix]),
-                        db=self.db,
-                        **self.sites[name])
+                        (args:=self.sites[name]).pop('start_urls'),
+                         self.db,
+                         args.get('credentials',{})
+                         )
