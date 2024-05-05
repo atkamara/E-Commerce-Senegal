@@ -80,13 +80,13 @@ class Redis(Cursor):
             str: Flattened string representation of the input data.
         """
         return flatten_dict(str(data))
-    def push(self,Result):
+    def push(self,result):
         """
         Pushes a mapped data object to the Redis database.
         Args:
-            Result: The mapped data object to push to Redis.
+            result: The mapped data object to push to Redis.
         Returns:
             None
         """
         self.engine.hset(self.id,
-                         mapping=self.pipe(Result))
+                         mapping=self.pipe(result))
