@@ -47,8 +47,8 @@ def test_main_page_first_element():
     """
     response = load_page('p1')
     p = MainPage(response)
-    p2 = p[0]
-    assert type(p[0]).__name__ == 'MainItem'
+    p2 = p[0].dataclass
+    assert type(p[0]).__name__ == 'MappedData'
 def test_main_page_next_page():
     """
     Tests the next page attribute of MainPage objects.

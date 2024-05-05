@@ -54,5 +54,5 @@ def test_MainItem_instance():
     It asserts that the parsed object's class name is 'MainItem'.
     """
     html = '''<div></div>'''
-    mi = Item.MainItem.parse(Selector(text=html))
+    mi = Item.MainItem.parse(Selector(text=html)).dataclass
     assert mi.__class__.__name__ == 'MainItem'

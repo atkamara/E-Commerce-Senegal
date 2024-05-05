@@ -104,7 +104,7 @@ html = """          <div class="listings-cards__list-item">
             </div>
           </div>"""
           
-item = MainItem.parse(Selector(text=html))
+item = MainItem.parse(Selector(text=html)).dataclass
 
 def test_field_ProductTitle():
     """
