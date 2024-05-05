@@ -7,11 +7,11 @@ Classes:
 Functions:
     flatten_dict: Flatten a dictionary with nested dictionaries and lists.
 """
-from .Model import Con 
 import redis
-from .utils import flatten_dict
 from functools import cached_property
-class Redis(Con):
+from .Model import Cursor 
+from .utils import flatten_dict
+class Redis(Cursor):
     """
     Represents a connection to a Redis database.
     Attributes:
@@ -20,7 +20,7 @@ class Redis(Con):
         engine: The Redis connection object.
     Methods:
         __init__: Initializes a Redis object with the provided parameters.
-        Push: Pushes a mapped data object to the Redis database.
+        push: Pushes a mapped data object to the Redis database.
     """
     def __init__(self,
                  domain:str,
@@ -48,24 +48,50 @@ class Redis(Con):
         self.category = category
         self.partition = partition
         self.engine = redis.Redis(host, port, username, password, **kwargs)
-    @cached_property
+    @property
     def pattern(self):
-        return ':'.join(folder for folder in [self.domain,self.category,self.partition] if folder)
+        """
+        Generates a pattern based on the domain, category, and partition attributes.
+        
+        Returns:
+            str: The generated pattern, where non-empty attributes are joined with a colon (':').
+        """
+        return ':'.join(folder for folder in [self.domain, self.category, self.partition] if folder)
     @property
     def incr(self):
+        """
+        Computes the increment value associated with the category using the engine's 'incr' method.
+        
+        Returns:
+            int: The increment value.
+        """
         return self.engine.incr(self.category)
     @property
     def id(self):
-        f'{self.pattern}:{self.incr}'
-    def pipe(self,data):
+        """
+        Generates an ID based on the pattern and increment values.
+        
+        Returns:
+            str: The generated ID, formatted as 'pattern:incr'.
+        """
+        return f'{self.pattern}:{self.incr}'
+    def pipe(self, data):
+        """
+        Processes the input data and returns a flattened string representation.
+        
+        Args:
+            data: Input data to be processed.
+        Returns:
+            str: Flattened string representation of the input data.
+        """
         return flatten_dict(str(data))
-    def Push(MappedData):
+    def push(DataHandler):
         """
         Pushes a mapped data object to the Redis database.
         Args:
-            MappedData: The mapped data object to push to Redis.
+            DataHandler: The mapped data object to push to Redis.
         Returns:
             None
         """
         self.engine.hset(self.id,
-                         mapping=self.pipe(MappedData))
+                         mapping=self.pipe(DataHandler))

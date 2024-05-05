@@ -3,9 +3,9 @@ Module for managing CSS configurations.
 Classes:
     MainCss: A class for managing main CSS configurations.
 """
-from .Model import Config
 from functools import cached_property
-from .utils import dir
+from .Model import Config
+from .utils import current_dir
 class MainCss(Config):
     """
     A class for managing main CSS configurations.
@@ -15,7 +15,7 @@ class MainCss(Config):
     Methods:
         _val_conf_attr: Property returning the valid CSS attributes.
     """
-    _conf_file: str = dir('css.ini')
+    _conf_file: str = current_dir('css.ini')
     @cached_property
     def _val_conf_attr(self) -> list:
         """

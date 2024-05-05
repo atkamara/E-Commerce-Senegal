@@ -13,11 +13,27 @@ from abc import ABC, abstractmethod
 from functools import wraps, cached_property
 import dateparser
 import logging
-logger = logging.getLogger()
-from dataclasses import field as dcl_field, asdict, dataclass, make_dataclass
+from dataclasses import field as dcl_field, asdict, make_dataclass
 from datetime import datetime
 import configparser
 from scrapy import Spider
+logger = logging.getLogger()
+class ParseError(BaseException):
+    """
+    Exception raised when parsing encounters an error.
+    This exception is raised when there is an error during parsing of data, such as invalid format or missing required fields.
+    Attributes:
+        message (str): Optional error message describing the parsing error.
+    Methods:
+        __init__(self, message=None): Initializes a ParseError instance with an optional error message.
+        __str__(self): Returns a string representation of the exception.
+    Examples:
+        >>> raise ParseError("Invalid data format")
+        Traceback (most recent call last):
+            ...
+        ParseError: Invalid data format
+    """
+    ...
 class Formatter(ABC):
     """
     Abstract base class representing a data formatter.
@@ -48,7 +64,7 @@ class Formatter(ABC):
             res = None
             try:
                 res = func(self, value)
-            except:
+            except ParseError:
                 logger.warning('failed parsing %s' % value)
             return res
         return wrapper
@@ -63,7 +79,7 @@ class Formatter(ABC):
         """
         ...
     @cast
-    def Format(self, value):
+    def format(self, value):
         """
         Formats the given value using the specified formatting method.
         Args:
@@ -104,7 +120,7 @@ class Field(Formatter):
             list: A list of extracted values.
         """
         out = self.html.xpath('|'.join(self.__getattr__(paths))).getall()
-        return self.Format(out)
+        return self.format(out)
     @cached_property
     def value(self):
         """
@@ -121,25 +137,25 @@ class Field(Formatter):
             list: A list of extracted values.
         """
         return self.getter(paths='relative_xpaths')
-class Con(ABC):
+class Cursor(ABC):
     """
     Abstract base class representing a connection interface.
     Methods:
-        Push: Abstract method to push an object to the connection.
+        push: Abstract method to push an object to the connection.
     """
     def __bool__(self):
         return True
     @abstractmethod
-    def Push(MappedData):
+    def push(DataHandler):
         """
         Abstract method to push an object to the connection.
         Args:
-            MappedData: The object to push to the connection.
+            DataHandler: The object to push to the connection.
         Raises:
             NotImplementedError: If the method is not implemented in the subclass.
         """
         ...
-class MappedData:
+class DataHandler:
     """
     Represents mapped data with a specific name and fields.
     Attributes:
@@ -147,13 +163,13 @@ class MappedData:
         fields (list): A list of field names for the dataclass.
         dataclass: The constructed dataclass object representing the mapped data.
     Methods:
-        __init__: Initializes a MappedData object with the provided name and fields.
+        __init__: Initializes a DataHandler object with the provided name and fields.
         __str__: Returns the dataclass as a dictionary.
         __rshift__: Pushes the string representation of the dataclass to a consumer.
     """
     def __init__(self, name, fields):
         """
-        Initializes a MappedData object with the provided name and fields.
+        Initializes a DataHandler object with the provided name and fields.
         Args:
             name (str): The name of the mapped data.
             fields (list): A list of field names for the dataclass.
@@ -168,34 +184,34 @@ class MappedData:
             dict: The dataclass represented as a dictionary.
         """
         return asdict(self.dataclass)
-    def __rshift__(self, Con):
+    def __rshift__(self, Cursor):
         """
         Pushes the string representation of the dataclass to a consumer.
         Args:
-            Con: The consumer object to which the data is pushed.
+            Cursor: The consumer object to which the data is pushed.
         """
-        Con.Push(self)
+        Cursor.push(self)
 class Item:
     """
     A class representing an item extracted from a web page.
     Methods:
-        register: Registers a FieldClass to the Item class.
+        register: Registers a fieldclass to the Item class.
         __str__: Returns the name of the Item class as a string.
         __rshift__: Defines the behavior for the '>>' operator.
         parse: Parses HTML content and constructs an Item object.
     """
     @classmethod
-    def register(cls, FieldClass) -> None:
+    def register(cls, fieldclass) -> None:
         """
-        Registers a FieldClass to the Item class.
+        Registers a fieldclass to the Item class.
         Args:
-            FieldClass: The class representing a field in the Item.
+            fieldclass: The class representing a field in the Item.
         Returns:
             None
         """
         if not hasattr(cls, 'registry'):
             cls.registry: set = set()
-        cls.registry.add(FieldClass)
+        cls.registry.add(fieldclass)
     def __str__(self):
         """
         Returns the name of the Item class as a string.
@@ -220,7 +236,7 @@ class Item:
              getattr(field(html), method))
             for field in self.registry
         ] + [('CreatedAt', datetime, datetime.now().isoformat())]
-        return MappedData(str(self), item_fields)
+        return DataHandler(str(self), item_fields)
 class Config:
     """
     A class for reading and accessing configuration settings.
@@ -250,7 +266,7 @@ class Config:
         Returns:
             str: The name of the Config class.
         """
-        return self.__class__.__name__
+        return (self.__class__.__name__)
     def __getattr__(self, val):
         """
         Retrieves the value of a configuration attribute.
@@ -359,12 +375,18 @@ class Site:
     """
     name: str
     start_urls: list
-    Page: Page
+    pageclass: Page
     follow: bool = True
-    class db:
+    class Db:
+        """
+        Default Db Class
+        """
         @staticmethod
-        def Push(self,foo):
-            return foo
+        def push(self,val):
+            """
+            No-change
+            """
+            return val
     @property
     def spider(self) -> SiteSpider:
         """
@@ -374,7 +396,7 @@ class Site:
         """
         next_action = ...
         if self.follow:
-            next_action = lambda self,page : self.response.follow(page.next, callback=self.parse)
+            next_action = lambda cls,page : cls.response.follow(page.next, callback=cls.parse)
         class SiteSpider(Spider):
             """
             A spider class for scraping data from the website.
@@ -386,8 +408,8 @@ class Site:
             """
             name = self.name
             start_urls = self.start_urls
-            Page = self.Page
-            db = self.db
+            pageclass = self.pageclass
+            db = self.Db
             def parse(self, response):
                 """
                 Parses the response from the website.
@@ -396,7 +418,7 @@ class Site:
                 Yields:
                     dict: The scraped data items.
                 """
-                for item in (page := self.Page(response)):
+                for item in (page := self.pageclass(response)):
                     item >> self.db
                     yield item
                 if page.next:

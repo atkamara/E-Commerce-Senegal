@@ -9,10 +9,8 @@ Classes:
     PublishLink: A class representing the publish link of an item.
     ProductPrice: A class representing the price of a product.
 """
-from .Model import Field
-from itertools import product
-from functools import lru_cache
 import dateparser
+from .Model import Field,ParseError
 from .Item import MainItem
 from .Css import MainCss
 from .utils import phone, currency, ravel, re
@@ -71,7 +69,11 @@ class PublishDate(CssField):
         Returns:
             str: The formatted publish date value.
         """
-        return dateparser.parse(ravel(value)).isoformat()
+        date = dateparser.parse(ravel(value))
+        if date:
+            return date.isoformat()
+        else :
+            raise ParseError
 @MainItem.register
 class Contact(CssField):
     """
@@ -89,7 +91,7 @@ class Contact(CssField):
         Returns:
             str: The formatted contact information.
         """
-        return re.sub('[\s\-\+]','',';'.join(set(re.findall(phone,ravel(value)))))
+        return re.sub(r'[\s\-\+]','',';'.join(set(re.findall(phone,ravel(value)))))
 @MainItem.register
 class PublishLink(CssField):
     """
@@ -125,4 +127,4 @@ class ProductPrice(CssField):
         Returns:
             str: The formatted product price value.
         """
-        return re.sub('[\s,\.]','',';'.join(re.findall(currency,ravel(value,sep=';'))))
+        return re.sub(r'[\s,\.]','',';'.join(re.findall(currency,ravel(value,sep=';'))))

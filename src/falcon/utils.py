@@ -31,7 +31,7 @@ def flatten_dict(d, parent_key='', sep=':'):
         else:
             items.append((new_key, v))
     return dict(items)
-def dir(file: str) -> str:
+def current_dir(file: str) -> str:
     """
     Returns the path to a file in the current directory.
     Args:
