@@ -10,12 +10,10 @@ from typing import Union
 def flatten_dict(d, parent_key='', sep=':'):
     """
     Flatten a dictionary with nested dictionaries and lists.
-
     Args:
         d (dict): The input dictionary to flatten.
         parent_key (str, optional): The parent key for recursion. Defaults to ''.
         sep (str, optional): The separator to use between keys. Defaults to '_'.
-
     Returns:
         dict: The flattened dictionary.
     """
@@ -33,8 +31,6 @@ def flatten_dict(d, parent_key='', sep=':'):
         else:
             items.append((new_key, v))
     return dict(items)
-
-
 def dir(file: str) -> str:
     """
     Returns the path to a file in the current directory.
