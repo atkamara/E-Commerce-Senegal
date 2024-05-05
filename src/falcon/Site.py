@@ -29,10 +29,11 @@ class MainSite(Site):
     Methods:
         __init__: Initializes a MainSite object with the provided attributes.
     """
-    def __init__(self, name, 
-                 start_urls, 
-                 db=None, 
-                 credentials={}, 
+    def __init__(self,
+                 name,
+                 start_urls,
+                 db=None,
+                 credentials={},
                  follow=True) -> None:
         """
         Initializes a MainSite object.
@@ -79,7 +80,7 @@ class MultipleSites:
         Returns:
             int: The number of sites.
         """
-        return len(sites)
+        return len(self.site_names)
     def __iter__(self):
         """
         Returns an iterator object.

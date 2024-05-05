@@ -14,7 +14,6 @@ from functools import wraps, cached_property
 from dataclasses import asdict, make_dataclass
 from datetime import datetime
 import configparser
-import dateparser
 import logging
 from scrapy import Spider
 logger = logging.getLogger()
@@ -65,7 +64,7 @@ class Formatter(ABC):
             try:
                 res = func(self, value)
             except ParseError:
-                logger.warning(f'failed parsing {value}')
+                logger.warning('failed parsing %s'%value)
             return res
         return wrapper
     @abstractmethod
@@ -145,11 +144,11 @@ class Cursor(ABC):
     def __bool__(self):
         return True
     @abstractmethod
-    def push(self,Result):
+    def push(self,result):
         """
         Abstract method to push an object to the connection.
         Args:
-            Result: The object to push to the connection.
+            result: The object to push to the connection.
         Raises:
             NotImplementedError: If the method is not implemented in the subclass.
         """

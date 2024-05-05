@@ -13,7 +13,7 @@ import dateparser
 from .Model import Field,ParseError
 from .Item import MainItem
 from .Css import MainCss
-from .utils import phone, currency, ravel, re
+from .utils import PHONE, CURRENCY, ravel, re
 class CssField(Field, MainCss):
     """
     A class representing a CSS field.
@@ -89,7 +89,7 @@ class Contact(CssField):
         Returns:
             str: The formatted contact information.
         """
-        return re.sub(r'[\s\-\+]','',';'.join(set(re.findall(phone,ravel(value)))))
+        return re.sub(r'[\s\-\+]','',';'.join(set(re.findall(PHONE,ravel(value)))))
 @MainItem.register
 class PublishLink(CssField):
     """
@@ -125,4 +125,4 @@ class ProductPrice(CssField):
         Returns:
             str: The formatted product price value.
         """
-        return re.sub(r'[\s,\.]','',';'.join(re.findall(currency,ravel(value,sep=';'))))
+        return re.sub(r'[\s,\.]','',';'.join(re.findall(CURRENCY,ravel(value,sep=';'))))

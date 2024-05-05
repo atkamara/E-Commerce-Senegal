@@ -24,7 +24,7 @@ def flatten_dict(d, parent_key='', sep=':'):
             items.extend(flatten_dict(v, new_key, sep=sep).items())
         elif isinstance(v, list):
             for i, val in enumerate(v):
-                if isinstance(val, dict) or isinstance(val, list):
+                if isinstance(val, (dict,list)):
                     items.extend(flatten_dict({str(i): val}, new_key, sep=sep).items())
                 else:
                     items.append((f"{new_key}{sep}{i}", val))
@@ -43,14 +43,14 @@ def current_dir(file: str) -> str:
         path.dirname(path.realpath(__file__)),
         file
     )
-phone = r'[\s\-]{0,1}?'.join([
+PHONE = r'[\s\-]{0,1}?'.join([
     r'\+{0,1}?\d{0,3}',
     r'(\d{2}',
     r'\d{3}',
     r'\d{2}',
     r'\d{2})'
 ])
-currency = r'(\d{1}.*?)[^\d\s,.]'
+CURRENCY = r'(\d{1}.*?)[^\d\s,.]'
 def ravel(value: Union[str, list[str], set[str]], sep: str = ' ') -> str:
     """
     Flattens and formats a string, list, or set.
