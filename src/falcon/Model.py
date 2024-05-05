@@ -128,6 +128,8 @@ class Con(ABC):
     Methods:
         Push: Abstract method to push an object to the connection.
     """
+    def __bool__(self):
+        return True
     @abstractmethod
     def Push(MappedData):
         """
