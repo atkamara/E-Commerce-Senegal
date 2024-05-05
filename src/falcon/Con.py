@@ -10,6 +10,7 @@ Functions:
 from .Model import Con 
 import redis
 from .utils import flatten_dict
+from functools import cached_property
 class Redis(Con):
     """
     Represents a connection to a Redis database.
@@ -22,7 +23,8 @@ class Redis(Con):
         Push: Pushes a mapped data object to the Redis database.
     """
     def __init__(self,
-                 category,
+                 domain:str,
+                 category : str,
                  partition: str,
                  host: str,
                  port: int = 6379,
@@ -42,9 +44,21 @@ class Redis(Con):
         Returns:
             None
         """
+        self.domain = domain
         self.category = category
         self.partition = partition
         self.engine = redis.Redis(host, port, username, password, **kwargs)
+    @cached_property
+    def pattern(self):
+        return ':'.join(folder for folder in [self.domain,self.category,self.partition] if folder)
+    @property
+    def incr(self):
+        return self.engine.incr(self.category)
+    @property
+    def id(self):
+        f'{self.pattern}:{self.incr}'
+    def pipe(self,data):
+        return flatten_dict(str(data))
     def Push(MappedData):
         """
         Pushes a mapped data object to the Redis database.
@@ -53,6 +67,5 @@ class Redis(Con):
         Returns:
             None
         """
-        incr = self.engine.incr(self.category)
-        self.engine.hset(f'{self.category}:{self.partition}:{incr}',
-                         mapping=flatten_dict(str(MappedData)))
+        self.engine.hset(self.id,
+                         mapping=self.pipe(MappedData))

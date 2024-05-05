@@ -174,7 +174,7 @@ class MappedData:
         Args:
             Con: The consumer object to which the data is pushed.
         """
-        Con.Push(str(self))
+        Con.Push(self)
 class Item:
     """
     A class representing an item extracted from a web page.
