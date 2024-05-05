@@ -360,6 +360,7 @@ class Site:
     name: str
     start_urls: list
     Page: Page
+    follow: bool = True
     class db:
         @staticmethod
         def Push(self,foo):
@@ -371,6 +372,9 @@ class Site:
         Returns:
             class: A spider class for scraping data from the website.
         """
+        next_action = ...
+        if self.follow:
+            next_action = lambda self,page : self.response.follow(page.next, callback=self.parse)
         class SiteSpider(Spider):
             """
             A spider class for scraping data from the website.
@@ -396,5 +400,5 @@ class Site:
                     item >> self.db
                     yield item
                 if page.next:
-                    self.response.follow(page.next, callback=self.parse)
+                    next_action(self,page)
         return SiteSpider

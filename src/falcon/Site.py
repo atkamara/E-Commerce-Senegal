@@ -11,7 +11,7 @@ class MainSite(Site):
     Methods:
         __init__: Initializes a MainSite object with the provided attributes.
     """
-    def __init__(self, name, start_urls, db=None,credentials={})->None:
+    def __init__(self, name, start_urls, db=None,credentials={},follow=True)->None:
         """
         Initializes a MainSite object.
         Args:
@@ -24,6 +24,7 @@ class MainSite(Site):
         self.Page = MainPage
         if db:
             self.db: str = db(**credentials) 
+        self.follow = follow
 class MultipleSites:
     """
     A class representing multiple websites.
@@ -39,8 +40,9 @@ class MultipleSites:
         __getitem__: Returns the MainSite object corresponding to the given index.
     """
     loop_state = 0
-    sites: dict[dict]
-    db : str = None
+    def __init__(self,sites: dict[dict],db: str = None):
+        self.sites = sites 
+        self.db = db
     @cached_property
     def site_names(self):
         """
@@ -90,3 +92,4 @@ class MultipleSites:
                          self.db,
                          args.get('credentials',{})
                          )
+        
