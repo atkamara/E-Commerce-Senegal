@@ -18,7 +18,6 @@ from dataclasses import field as dcl_field, asdict, dataclass, make_dataclass
 from datetime import datetime
 import configparser
 from scrapy import Spider
-from .utils import un_nest_dict
 class Formatter(ABC):
     """
     Abstract base class representing a data formatter.
