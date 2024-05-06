@@ -174,7 +174,7 @@ class MappedData:
         self.name = name
         self.fields = fields
         self.dataclass = make_dataclass(self.name, self.fields)()
-    def __str__(self):
+    def to_dict(self):
         """
         Returns the dataclass as a dictionary.
         Returns:
@@ -404,6 +404,7 @@ class Site:
             start_urls = self.start_urls
             pageclass = self.pageclass
             db = self.Db
+            follow = self.follow
             def parse(self, response):
                 """
                 Parses the response from the website.
@@ -414,7 +415,7 @@ class Site:
                 """
                 for item in (page := self.pageclass(response)):
                     item >> self.db
-                    yield item
+                    yield item.to_dict()
                 if page.next and self.follow:
                     response.follow(page.next, callback=self.parse)
         return SiteSpider

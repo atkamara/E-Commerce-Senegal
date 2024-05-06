@@ -62,3 +62,10 @@ def test_page_items_count():
     """
     p = [len(MainPage(load_page('p%d' % d))) for d in range(1, 8)]
     assert p == [42, 33, 14, 46, 12, 21, 25]
+def test_main_page_items_to_dict():
+    """
+    Tests the items of MainPage objects.
+    """
+    response = load_page('p1')
+    p0 = MainPage(response)[0]
+    assert isinstance(p0.to_dict(),dict)
