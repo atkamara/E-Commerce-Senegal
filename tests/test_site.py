@@ -30,4 +30,15 @@ def test_Run_Spider():
     process = CrawlerProcess()
     process.crawl(spider)
     process.start() 
-    res = process
+
+def test_Run_SpiderMultisite():
+    sites = [
+            ((name:=f'p{i}'),
+             {'start_urls':[page_dir(name)],
+              'follow':False})
+            for i in range(1,8)]
+    ms = MultipleSites(sites)
+    process = CrawlerProcess()
+    for site in ms:
+        process.crawl(site.spider)
+    process.start() 
