@@ -44,7 +44,7 @@ def current_dir(file: str) -> str:
         file
     )
 PHONE = r'[\s\-]{0,1}?'.join([
-    r'\+{0,1}?\d{0,3}',
+    r'^.*?\+{0,1}?\d{0,3}',
     r'(\d{2}',
     r'\d{3}',
     r'\d{2}',

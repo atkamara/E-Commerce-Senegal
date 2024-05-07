@@ -69,3 +69,11 @@ def test_main_page_items_to_dict():
     response = load_page('p1')
     p0 = MainPage(response)[0]
     assert isinstance(p0.to_dict(),dict)
+def test_main_page2_instance():
+    """
+    Tests the instantiation of MainPage objects.
+    """
+    response = load_page('p3')
+    p = MainPage(response)
+    contact = p[0].dataclass.Contact
+    assert isinstance(p, MainPage)
