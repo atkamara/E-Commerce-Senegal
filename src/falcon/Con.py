@@ -24,7 +24,8 @@ class Redis(Cursor):
     def __init__(self,
                  domain:str,
                  category : str,
-                 partition: str,
+                 partition: str='',
+                 root='root',
                  **kwargs) -> None:
         """
         Initializes a Redis object with the provided parameters.
@@ -39,6 +40,7 @@ class Redis(Cursor):
         Returns:
             None
         """
+        self.root=root
         self.domain = domain
         self.category = category
         self.partition = partition
@@ -51,7 +53,7 @@ class Redis(Cursor):
         Returns:
             str: The generated pattern, where non-empty attributes are joined with a colon (':').
         """
-        return ':'.join(folder for folder in [self.domain, self.category, self.partition] if folder)
+        return ':'.join(folder for folder in [self.root,self.domain, self.category, self.partition] if folder)
     @property
     def incr(self):
         """
@@ -60,7 +62,7 @@ class Redis(Cursor):
         Returns:
             int: The increment value.
         """
-        return self.engine.incr(self.category)
+        return self.engine.incr('items')
     @property
     def id(self):
         """
@@ -88,5 +90,45 @@ class Redis(Cursor):
         Returns:
             None
         """
-        self.engine.hset(self.id,
-                         mapping=self.pipe(result))
+        self.engine.hset(self.id,mapping=self.pipe(result))
+class RedisUser(Redis):
+    def users_pattern(self,tel):
+        return ':'.join([
+            self.root,
+            'Users',
+            tel,
+            'Domains',
+            self.domain,
+            'Categories',
+            self.category])
+    def push(self,result):
+        piped = self.pipe(result)
+        tel_id = self.tel_id(piped['Contact'])
+        title = piped['ProductTitle']
+        pattern = self.users_pattern(tel_id)
+        incr = self.engine.incr(pattern)
+        id = f'{pattern}:{title}:{incr}'
+        self.engine.hset(id,mapping=piped)
+    def parent_tel_pattern(self,tel,parent):
+        return f'{self.root}:Ids:{parent}:{tel}'
+    def set_parent(self,tel,parent):
+        pattern = self.parent_tel_pattern(tel,parent)
+        self.engine.set(pattern,tel)
+        return pattern
+    def get_tel_parent(self,tel):
+        old = self.engine.keys(pattern=f'{self.root}:Ids:*:{tel}')
+        if not old:
+            old = [self.set_parent(tel,tel)]
+        return old
+    def update_tel_parent(self,tel,old_parent,parent):
+        self.engine.delete(old_parent[0])
+        return self.set_parent(tel,parent)
+    def tel_id(self,tel):
+        tels = tel.split(';')
+        tel = 'Unknown'
+        if tels[0]:
+            parents = [self.get_tel_parent(tel) for tel in tels ]
+            tel = parents.pop()[0].split(':')[2]
+            for other,old_parent in zip(tels,parents):
+                self.update_tel_parent(other,old_parent,tel)
+        return tel

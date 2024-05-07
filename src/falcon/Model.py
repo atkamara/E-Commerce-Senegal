@@ -60,7 +60,7 @@ class Formatter(ABC):
             Returns:
                 Any: The formatted value, or None if formatting fails.
             """
-            res = None
+            res = ''
             try:
                 res = func(self, value)
             except ParseError:

@@ -33,7 +33,6 @@ class MainSite(Site):
                  name,
                  start_urls,
                  db=None,
-                 credentials={},
                  follow=True) -> None:
         """
         Initializes a MainSite object.
@@ -46,7 +45,7 @@ class MainSite(Site):
         self.start_urls: list = start_urls
         self.pageclass = MainPage
         if db:
-            self.db: str = db(**credentials)
+            self.Db: str = db
         self.follow = follow
 class MultipleSites:
     """
@@ -63,24 +62,10 @@ class MultipleSites:
         __getitem__: Returns the MainSite object corresponding to the given index.
     """
     loop_state = 0
-    def __init__(self, sites: dict[dict], db: str = None):
+    def __init__(self, sites: list[dict]):
         self.sites = sites
-        self.db = db
-    @cached_property
-    def site_names(self):
-        """
-        Property to retrieve the names of all sites.
-        Returns:
-            list: A list of site names.
-        """
-        return list(self.sites.keys())
-    def __len__(self):
-        """
-        Returns the number of sites.
-        Returns:
-            int: The number of sites.
-        """
-        return len(self.site_names)
+    def __len__(self)->int:
+        return len(self.sites)
     def __iter__(self):
         """
         Returns an iterator object.
@@ -109,9 +94,4 @@ class MultipleSites:
         Returns:
             MainSite: The MainSite object at the specified index.
         """
-        return MainSite(
-            (name := self.site_names[ix]),
-            (args := self.sites[name]).pop("start_urls"),
-            self.db,
-            args.get("credentials", {}),
-        )
+        return MainSite((site:=self.sites[ix])[0],**site[1])
