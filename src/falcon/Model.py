@@ -9,6 +9,7 @@ Classes:
     Site: A class representing a website for web scraping.
 """
 from __future__ import annotations
+from collections import OrderedDict
 from abc import ABC, abstractmethod
 from functools import wraps, cached_property
 from dataclasses import asdict, make_dataclass
@@ -180,7 +181,7 @@ class MappedData:
         Returns:
             dict: The dataclass represented as a dictionary.
         """
-        return asdict(self.dataclass)
+        return asdict(self.dataclass,dict_factory=OrderedDict)
     def __rshift__(self, cursor):
         """
         Pushes the string representation of the dataclass to a consumer.
@@ -207,8 +208,8 @@ class Item:
             None
         """
         if not hasattr(cls, 'registry'):
-            cls.registry: set = set()
-        cls.registry.add(fieldclass)
+            cls.registry: list = []
+        cls.registry += [fieldclass]
     def __str__(self):
         """
         Returns the name of the Item class as a string.
