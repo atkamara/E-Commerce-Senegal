@@ -59,7 +59,9 @@ def MainPage():
     """
     xpath0 = '//article[contains(@class,"item") and not(contains(@class,"cart"))]'
     div = "//div[{}]".format
-    xpath1 = div(f'contains(@class,"list") and contains(@class,"item") ')
+    ins = map('contains(@class,"{}")'.format,["list","item"])
+    outs = map('not(contains(@class,"{}"))'.format,["header","after","before","notification"])
+    xpath1 = div('and'.join(list(ins)+list(outs)))
     xpath2 = div('@class="media panel panel-default"')
     xpaths = [xpath0, xpath1, xpath2]
     entity_name = 'MainPage'
@@ -152,7 +154,7 @@ def VendorLocation():
     icon_tags = ['i', 'svg']
     icon_text = ['/text']
     parent = ['/..']
-    data = ['/descendant[2]/text()', '/text()']
+    data = ['/*[2]/text()', '/text()','/a/text()']
     xpaths = list(map(''.join, product(root, icon_tags, loc_tests, parent, data))) + \
              list(map(''.join, product(root, icon_tags, icon_text, loc_tests, parent, data))) + [
                  '//img[contains(@src,"location")]/../text()']
