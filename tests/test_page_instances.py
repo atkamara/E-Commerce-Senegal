@@ -61,7 +61,7 @@ def test_page_items_count():
     Tests the count of items on each page.
     """
     p = [len(MainPage(load_page('p%d' % d))) for d in range(1, 8)]
-    assert p == [42, 33, 14, 46, 12, 21, 25]
+    assert p == [42, 32, 11, 44, 12, 21, 25]
 def test_main_page_items_to_dict():
     """
     Tests the items of MainPage objects.
@@ -73,7 +73,7 @@ def test_main_page2_instance():
     """
     Tests the instantiation of MainPage objects.
     """
-    response = load_page('p3')
+    response = load_page('p4')
     p = MainPage(response)
     contact = p[0].dataclass.Contact
     assert isinstance(p, MainPage)

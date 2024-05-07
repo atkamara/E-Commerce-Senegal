@@ -21,7 +21,7 @@ CREDENTIALS = {'host':'localhost',
                'decode_responses':True}
         
 def set_db(domain,category):
-    return RedisUser(domain,category,root='Falcon-Test3',**CREDENTIALS)
+    return RedisUser(domain,category,root='Falcon-Test5',**CREDENTIALS)
 def test_Run_Spider():
     start_urls = [page_dir('p1')]
     db = set_db('domain1','category1')
@@ -33,7 +33,6 @@ def test_Run_Spider():
     process = CrawlerProcess()
     process.crawl(spider)
     process.start() 
-
 def test_Run_SpiderMultisite():
     sites = [
             ((name:=f'p{i}'),
