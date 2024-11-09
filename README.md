@@ -9,4 +9,3 @@ HTML data parser for e-com websites
 - Expat Dakar
 - Jiji
 - CoinAfrique
-- Dorgoo
