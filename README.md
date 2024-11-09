@@ -7,6 +7,4 @@ HTML data parser for e-com websites
 
 **Ce logiciel propose des modules de scraping pour les principaux sites de e-commerce au Sénégal**
 - Jumia
-- Expat 
-- Jiji
 - CoinAfrique
